@@ -1,0 +1,53 @@
+In FastAPI, the `Depends` function is used for dependency injection. It allows you to define reusable components that can be used to extract, process, or validate data before passing it to your endpoint functions. These dependencies can be used to perform operations such as authentication, authorization, database connections, or any other pre-processing tasks.
+
+Here's a detailed documentation of how `Depends` works in FastAPI:
+
+### What is `Depends`?
+
+`Depends` is a special class provided by FastAPI that allows you to declare dependencies for your route functions. It can be used to extract and manipulate data before it's passed to your endpoint functions.
+
+### How to Use `Depends`
+
+1. **Defining a Dependency:**
+   
+   You can define a dependency by creating a function that performs the required operation and annotating it with `Depends`. This function can accept parameters from the request, perform some processing, and return the processed data.
+
+   ```python
+   from fastapi import Depends
+
+   async def get_current_user(token: str = Depends(get_token)):
+       # Implementation to extract user details from token
+       return user
+   ```
+
+2. **Using the Dependency in a Route:**
+   
+   Once you have defined a dependency, you can use it in your route functions by including it as a parameter.
+
+   ```python
+   @app.get("/users/me")
+   async def read_current_user(current_user: User = Depends(get_current_user)):
+       return current_user
+   ```
+
+   In this example, `get_current_user` is a dependency function that extracts the current user based on the token passed in the request header. This dependency is used in the `read_current_user` route function.
+
+### Dependency Resolution
+
+Dependencies can also depend on other dependencies, forming a chain of dependencies. FastAPI takes care of resolving these dependencies automatically by injecting the required parameters based on their types.
+
+### Dependency Injection
+
+FastAPI injects the dependencies into the route functions automatically when the corresponding route is accessed. It resolves the dependencies based on their definitions and passes the result to the route function.
+
+### Benefits of Using `Depends`
+
+- **Code Reusability:** Dependencies can be reused across multiple routes, reducing code duplication.
+  
+- **Separation of Concerns:** Dependencies allow you to separate the concerns of data extraction, validation, and processing from the main route logic, making your code more modular and maintainable.
+  
+- **Automatic Injection:** FastAPI automatically injects the dependencies into your route functions, simplifying the handling of request data.
+
+### Conclusion
+
+`Depends` in FastAPI is a powerful tool for handling dependencies in your application. By defining reusable components for data extraction and processing, you can make your code more modular, maintainable, and scalable.
