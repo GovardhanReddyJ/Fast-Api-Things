@@ -1,0 +1,66 @@
+What is Depends in FastAPI?
+
+Depends is a powerful dependency injection mechanism in FastAPI that enables you to declare and manage dependencies within your API routes. It streamlines the process of providing essential objects or functionalities that your API functions rely on.
+
+Key Concepts:
+
+Dependency Injection (DI): DI is a software design pattern that promotes loose coupling between components by separating code that defines what's needed (dependencies) from how it's obtained (implementation). Depends facilitates this pattern in FastAPI.
+Dependable Callables: These are functions, classes, or other callables that FastAPI can invoke to obtain the required dependencies. They encapsulate the logic for creating or retrieving resources that your API routes need.
+Dependency Resolution: When an API route is called, FastAPI executes the Depends-decorated parameters in the desired order (usually left-to-right). These functions might connect to databases, perform authentication checks, or generate data – essentially, anything your route needs to function correctly.
+How to Use Depends:
+
+Define Dependable Callables: Create functions that provide the dependencies:
+
+Python
+from fastapi import Depends
+
+async def get_current_user(token: str = Depends(Security(oauth2_scheme))):
+    # Validate token and retrieve user information
+    return user
+
+async def open_database_connection():
+    # Establish connection to the database
+    return connection
+Use code with caution.
+Inject Dependencies into Routes: Use Depends to declare dependencies in your route function's signature:
+
+Python
+from fastapi import APIRouter
+
+app = APIRouter()
+
+@app.get("/items/{item_id}")
+async def get_item(item_id: int, user: User = Depends(get_current_user)):
+    # Access the user object retrieved by get_current_user
+    # Use user information or database connection (if applicable)
+    return {"item_id": item_id, "owner": user.username}
+Use code with caution.
+Here, get_item receives the user object automatically through the Depends(get_current_user) annotation.
+
+Benefits of Using Depends:
+
+Separation of Concerns: Decoupling API routes from dependency logic improves code readability, maintainability, and testability.
+Reusability: Dependencies can be shared across multiple routes, reducing code duplication.
+Dependency Management: FastAPI handles the execution and caching of dependencies for optimal performance.
+Testability: You can easily mock dependencies for unit testing in isolation.
+Advanced Depends Features:
+
+Parameterized Dependencies: Provide dynamic behavior by passing arguments to Depends:
+
+Python
+async def check_permission(permission: str = Depends(has_permission)):
+    # Check if user has the specified permission
+    return True  # Or False if permission is denied
+Use code with caution.
+In this example, has_permission would be a function that accepts the permission argument.
+
+Caching Behavior: Control how Depends caches results using the use_cache argument (default: True) or a custom dependency cache.
+
+Dependency Classes: Create reusable dependency classes for more complex scenarios.
+
+Additional Considerations:
+
+Depends is often used with security decorators like Security to enforce authentication and authorization.
+It's generally recommended to avoid placing complex logic directly within Depends functions for better organization and testability.
+Explore FastAPI's built-in dependencies (e.g., HTTPException, Body) for common use cases.
+By effectively leveraging Depends, you can structure your FastAPI applications for cleaner, more maintainable, and well-tested code.
